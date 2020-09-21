@@ -61,7 +61,7 @@ class Lab2{
         BigInteger m = c.modPow(d, n);
         String message = m.toString();
 
-        System.out.println("Decrypted message:" + message);
+        System.out.println("Decrypted message: " + message);
 
 
     }
