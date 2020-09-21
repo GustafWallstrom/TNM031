@@ -3,6 +3,8 @@
 import java.io.*;
 import java.net.*;
 import java.security.KeyStore;
+import java.util.Scanner;
+
 import javax.net.ssl.*;
 
 public class SecureAdditionClient {
@@ -10,8 +12,8 @@ public class SecureAdditionClient {
 	private int port;
 	// This is not a reserved port number 
 	static final int DEFAULT_PORT = 8189;
-	static final String KEYSTORE = "LIUkeystore.ks";
-	static final String TRUSTSTORE = "LIUtruststore.ks";
+	static final String KEYSTORE = "SecureAdditionServer/client/LIUkeystore.ks";
+	static final String TRUSTSTORE = "SecureAdditionServer/client/LIUtruststore.ks";
 	static final String KEYSTOREPASS = "123456";
 	static final String TRUSTSTOREPASS = "abcdef";
   
@@ -50,12 +52,42 @@ public class SecureAdditionClient {
 			socketIn = new BufferedReader( new InputStreamReader( client.getInputStream() ) );
 			PrintWriter socketOut = new PrintWriter( client.getOutputStream(), true );
 			
-			String numbers = "1.2 3.4 5.6";
-			System.out.println( ">>>> Sending the numbers " + numbers+ " to SecureAdditionServer" );
-			socketOut.println( numbers );
-			System.out.println( socketIn.readLine() );
+			// String numbers = "1.2 3.4 5.6";
+			// System.out.println( ">>>> Sending the numbers " + numbers+ " to SecureAdditionServer" );
+			// socketOut.println( numbers );
+			// System.out.println( socketIn.readLine() );
 
-			socketOut.println ( "" );
+			System.out.println( "\n*-----* Lab 3: SSL *-----*");
+			System.out.println("Option 1: Upload file ");
+			System.out.println("Option 2: Download file");
+			System.out.println("Option 3: Delete file");
+			System.out.println( "*------------------------*\n\n");
+
+			System.out.print("Choose wisely: ");
+			Scanner scan = new Scanner(System.in);
+			String option = scan.next();	
+			scan.close();
+
+			switch(option){
+				case "1": //Upload file
+
+					break;
+				case "2": // Download file
+
+					break;
+				case "3": // Delete file
+
+					break; 
+
+				default: 
+					System.out.println("Wrong option, try agin!");
+					break;
+
+			}
+
+
+
+
 		}
 		catch( Exception x ) {
 			System.out.println( x );

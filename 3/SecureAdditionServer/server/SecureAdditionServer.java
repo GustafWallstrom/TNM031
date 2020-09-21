@@ -1,4 +1,3 @@
-
 // An example class that uses the secure server socket class
 
 import java.io.*;
@@ -12,8 +11,8 @@ public class SecureAdditionServer {
 	private int port;
 	// This is not a reserved port number
 	static final int DEFAULT_PORT = 8189;
-	static final String KEYSTORE = "LIUkeystore.ks";
-	static final String TRUSTSTORE = "LIUtruststore.ks";
+	static final String KEYSTORE = "SecureAdditionServer/server/LIUkeystore.ks";//"LIUkeystore.ks"; 
+	static final String TRUSTSTORE = "SecureAdditionServer/server/LIUtruststore.ks";//"LIUtruststore.ks";
 	static final String KEYSTOREPASS = "123456";
 	static final String TRUSTSTOREPASS = "abcdef";
 	
