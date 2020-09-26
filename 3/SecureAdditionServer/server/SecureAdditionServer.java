@@ -7,14 +7,17 @@ import java.security.*;
 import java.util.StringTokenizer;
 
 
+
+
 public class SecureAdditionServer {
 	private int port;
 	// This is not a reserved port number
 	static final int DEFAULT_PORT = 8189;
-	static final String KEYSTORE = "SecureAdditionServer/server/LIUkeystore.ks";//"LIUkeystore.ks"; 
-	static final String TRUSTSTORE = "SecureAdditionServer/server/LIUtruststore.ks";//"LIUtruststore.ks";
+	static final String KEYSTORE = "server/LIUkeystore.ks";//"LIUkeystore.ks"; 
+	static final String TRUSTSTORE = "server/LIUtruststore.ks";//"LIUtruststore.ks";
 	static final String KEYSTOREPASS = "123456";
 	static final String TRUSTSTOREPASS = "abcdef";
+	
 	
 	/** Constructor
 	 * @param port The port where the server
@@ -48,27 +51,52 @@ public class SecureAdditionServer {
 			System.out.println("\n>>>> SecureAdditionServer: active ");
 			SSLSocket incoming = (SSLSocket)sss.accept();
 
-      		BufferedReader in = new BufferedReader( new InputStreamReader( incoming.getInputStream() ) );
-			PrintWriter out = new PrintWriter( incoming.getOutputStream(), true );			
+      		BufferedReader socketFromClient = new BufferedReader( new InputStreamReader( incoming.getInputStream() ) );
+			PrintWriter socketToClient = new PrintWriter( incoming.getOutputStream(), true );			
 			
-			String str;
-			while ( !(str = in.readLine()).equals("") ) {
-				double result = 0;
-				StringTokenizer st = new StringTokenizer( str );
-				try {
-					while( st.hasMoreTokens() ) {
-						Double d = new Double( st.nextToken() );
-						result += d.doubleValue();
-					}
-					out.println( "The result is " + result );
-				}
-				catch( NumberFormatException nfe ) {
-					out.println( "Sorry, your list contains an invalid number" );
-				}
+			// String str;
+			// while ( !(str = socketFromClient.readLine()).equals("") ) {
+			// 	double result = 0;
+			// 	StringTokenizer st = new StringTokenizer( str );
+			// 	try {
+			// 		while( st.hasMoreTokens() ) {
+			// 			Double d = new Double( st.nextToken() );
+			// 			result += d.doubleValue();
+			// 		}
+			// 		socketToClient.println( "The result is " + result );
+			// 	}
+			// 	catch( NumberFormatException nfe ) {
+			// 		socketToClient.println( "Sorry, your list contains an invalid number" );
+			// 	}
+			// }
+		
+
+			String option = socketFromClient.readLine();
+
+
+			switch(option){
+				case "1": // Upload file to server
+				System.out.println("Option 1, uploading file to server...");
+
+
+				System.out.println("From the client: " + socketFromClient.readLine());
+
+		
+					break;
+				case "2": // Download file from server
+
+					break;
+				case "3": // Delete file from server
+
+					break;
+				default:
+					System.out.println("Error");
+					break;
 			}
+
 			incoming.close();
-		}
-		catch( Exception x ) {
+
+		}catch( Exception x ) {
 			System.out.println( x );
 			x.printStackTrace();
 		}

@@ -32,15 +32,18 @@ class Lab2{
         q = bigPrime();
 
         // RSA - algorithm
+        /*************** Step 1 ************/
         n = p.multiply(q);
         nPhi = (p.subtract(new BigInteger("1")).multiply(q.subtract(new BigInteger("1"))));
         
-        // How do we choose e?
-        // Public key.exponent
+ 
+        /*************** Step 2 ************/
+        // Public key exponent
         e = BigInteger.probablePrime(32, new SecureRandom());
 
         System.out.println("e: "+ e);
         
+        /*************** Step 3 ************/
         // Get private key exponent d such that (ed % (p-1)(q-1) = 1)
         d = e.modInverse(nPhi);
 
@@ -53,16 +56,22 @@ class Lab2{
         Scanner obj = new Scanner(System.in);
         BigInteger msg = new BigInteger(obj.nextLine());
 
+        /*************** Step 4 ************/
+
+        //Make variables n & e public, keep p,q & d secret
+
+        /*************** Step 5 ************/
         // Encrypted message: c=m^e (mod n)
         BigInteger c = msg.modPow(e,n);
         System.out.println("Encrypted message is: " + c + "\n");
 
+        /*************** Step 6 ************/
         // Decrypt the message: m = c^d (mod n)
         BigInteger m = c.modPow(d, n);
         String message = m.toString();
 
         System.out.println("Decrypted message: " + message);
 
-
+        obj.close();
     }
 }

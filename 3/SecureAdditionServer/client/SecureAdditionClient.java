@@ -12,8 +12,8 @@ public class SecureAdditionClient {
 	private int port;
 	// This is not a reserved port number 
 	static final int DEFAULT_PORT = 8189;
-	static final String KEYSTORE = "SecureAdditionServer/client/LIUkeystore.ks";
-	static final String TRUSTSTORE = "SecureAdditionServer/client/LIUtruststore.ks";
+	static final String KEYSTORE = "client/LIUkeystore.ks";
+	static final String TRUSTSTORE = "client/LIUtruststore.ks";
 	static final String KEYSTOREPASS = "123456";
 	static final String TRUSTSTOREPASS = "abcdef";
   
@@ -48,12 +48,12 @@ public class SecureAdditionClient {
 			System.out.println("\n>>>> SSL/TLS handshake completed");
 
 			
-			BufferedReader socketIn;
-			socketIn = new BufferedReader( new InputStreamReader( client.getInputStream() ) );
-			PrintWriter socketOut = new PrintWriter( client.getOutputStream(), true );
+			BufferedReader socketFromServer;
+			socketFromServer= new BufferedReader( new InputStreamReader( client.getInputStream() ) );
+			PrintWriter socketToServer = new PrintWriter( client.getOutputStream(), true );
 			
 			// String numbers = "1.2 3.4 5.6";
-			// System.out.println( ">>>> Sending the numbers " + numbers+ " to SecureAdditionServer" );
+			// System.out.println( ">>>> Sending the numbers " + numbers+ " to SecureAdditionServer " );
 			// socketOut.println( numbers );
 			// System.out.println( socketIn.readLine() );
 
@@ -65,18 +65,79 @@ public class SecureAdditionClient {
 
 			System.out.print("Choose wisely: ");
 			Scanner scan = new Scanner(System.in);
-			String option = scan.next();	
-			scan.close();
+			String option = scan.nextLine();	
+			//scan.close();
+
+			socketToServer.println(option);
 
 			switch(option){
-				case "1": //Upload file
 
+				case "1": // Upload file
+				
+				System.out.println("Option 1: Upload file.");
+				System.out.println("Which file do you want to upload? ");
+
+				String[] clientFileNames;
+
+				File clientF = new File("D:/Skola/Natverksprogrammeringochsäkerhet(TNM031)/Labs-and-assignments/3/SecureAdditionServer/Client/Files");
+				clientFileNames = clientF.list();
+
+				System.out.println("----------");
+				System.out.println("");
+				
+				for (String clientFileName : clientFileNames)
+					System.out.println(clientFileName);
+
+				System.out.println("");	
+				System.out.println("----------");
+				System.out.println("");	
+
+				System.out.print("Type the file you want to upload: ");
+				//Scanner fileScan = new Scanner(System.in);
+				String fileOption = scan.nextLine();
+				scan.close();
+
+				//String fileOption = "Gustafs.txt";
+				
+				try (BufferedReader reader = new BufferedReader(
+                    new FileReader(clientF + "/" + fileOption))) {
+                String line; 
+                while ((line = reader.readLine()) != null) { 
+					System.out.println(line);
+					socketToServer.println(line); // send one line at the time to server
+                }
+				} catch (IOException ioe) {
+					System.out.println(ioe);
+					ioe.printStackTrace();
+				}
+				
 					break;
+
 				case "2": // Download file
+					System.out.println("Option 2: Download file");
+
+					System.out.println("Choose which file to download: ");
+
+					String[] serverFileNames;
+
+					File serverF = new File("D:/Skola/Natverksprogrammeringochsäkerhet(TNM031)/Labs-and-assignments/3/SecureAdditionServer/Server/Files");
+					serverFileNames = serverF.list();
+
+					System.out.println("----------");
+					System.out.println("");
+					
+					for (String serverFileName : serverFileNames)
+						System.out.println(serverFileName);
+
+					System.out.println("");	
+					System.out.println("----------");
+					System.out.println("");	
+
+
 
 					break;
 				case "3": // Delete file
-
+					
 					break; 
 
 				default: 
