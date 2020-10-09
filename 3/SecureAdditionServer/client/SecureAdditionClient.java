@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.security.KeyStore;
 import java.util.Scanner;
-
 import javax.net.ssl.*;
 
 public class SecureAdditionClient {
@@ -51,11 +50,6 @@ public class SecureAdditionClient {
 			BufferedReader socketFromServer;
 			socketFromServer= new BufferedReader( new InputStreamReader( client.getInputStream() ) );
 			PrintWriter socketToServer = new PrintWriter( client.getOutputStream(), true );
-			
-			// String numbers = "1.2 3.4 5.6";
-			// System.out.println( ">>>> Sending the numbers " + numbers+ " to SecureAdditionServer " );
-			// socketOut.println( numbers );
-			// System.out.println( socketIn.readLine() );
 
 			System.out.println( "\n*-----* Lab 3: SSL *-----*");
 			System.out.println("Option 1: Upload file ");
@@ -66,7 +60,7 @@ public class SecureAdditionClient {
 			System.out.print("Choose wisely: ");
 			Scanner scan = new Scanner(System.in);
 			String option = scan.nextLine();	
-			//scan.close();
+			String fileOption = "";
 
 			socketToServer.println(option);
 
@@ -74,70 +68,84 @@ public class SecureAdditionClient {
 
 				case "1": // Upload file
 				
-				System.out.println("Option 1: Upload file.");
-				System.out.println("Which file do you want to upload? ");
+					System.out.println("Option 1: Upload file.");
+					System.out.println("Which file do you want to upload? ");
+					
+					File clientF = new File("D:/Skola/Natverksprogrammeringochsäkerhet(TNM031)/Labs-and-assignments/3/SecureAdditionServer/Client/Files");
+					listFiles(clientF);
 
-				String[] clientFileNames;
+					System.out.print("Type the file you want to upload: ");
+					fileOption = scan.nextLine();
+					socketToServer.println(fileOption);
 
-				File clientF = new File("D:/Skola/Natverksprogrammeringochsäkerhet(TNM031)/Labs-and-assignments/3/SecureAdditionServer/Client/Files");
-				clientFileNames = clientF.list();
-
-				System.out.println("----------");
-				System.out.println("");
-				
-				for (String clientFileName : clientFileNames)
-					System.out.println(clientFileName);
-
-				System.out.println("");	
-				System.out.println("----------");
-				System.out.println("");	
-
-				System.out.print("Type the file you want to upload: ");
-				//Scanner fileScan = new Scanner(System.in);
-				String fileOption = scan.nextLine();
-				scan.close();
-
-				//String fileOption = "Gustafs.txt";
-				
-				try (BufferedReader reader = new BufferedReader(
-                    new FileReader(clientF + "/" + fileOption))) {
-                String line; 
-                while ((line = reader.readLine()) != null) { 
-					System.out.println(line);
-					socketToServer.println(line); // send one line at the time to server
-                }
-				} catch (IOException ioe) {
-					System.out.println(ioe);
-					ioe.printStackTrace();
-				}
-				
+					// Upload to server:
+					try (BufferedReader reader = new BufferedReader(
+						new FileReader(clientF + "/" + fileOption))) {
+						String line; 
+						while ((line = reader.readLine()) != null) { 
+							System.out.println(line);
+							socketToServer.println(line); // send one line at the time to server
+						}
+						reader.close();
+						socketToServer.close();
+					} catch (IOException ioe) {
+						System.out.println("Error is: " + ioe);
+						ioe.printStackTrace();
+					}
+					
 					break;
 
 				case "2": // Download file
+				
 					System.out.println("Option 2: Download file");
-
 					System.out.println("Choose which file to download: ");
 
-					String[] serverFileNames;
-
 					File serverF = new File("D:/Skola/Natverksprogrammeringochsäkerhet(TNM031)/Labs-and-assignments/3/SecureAdditionServer/Server/Files");
-					serverFileNames = serverF.list();
+					listFiles(serverF);
 
-					System.out.println("----------");
-					System.out.println("");
+					fileOption = scan.nextLine();
+					socketToServer.println(fileOption);
+
+					// Download file: 
+					try{
+						String fileName = socketFromServer.readLine();
+						File newFile = new File( "./client/Files/" + fileName);
+						System.out.println("Downloading file: " + fileName);
+						newFile.createNewFile(); 
+
+						FileWriter writer = new FileWriter(newFile);
+						String line;
+						
+						while ((line = socketFromServer.readLine()) != null) { 
+
+							writer.write(line + "\n");
+						}
+						writer.close(); 
+		
+					}catch (IOException e) {
+						System.out.println("An error occurred.");
+						e.printStackTrace();
+					}
+
+					socketFromServer.close();
 					
-					for (String serverFileName : serverFileNames)
-						System.out.println(serverFileName);
-
-					System.out.println("");	
-					System.out.println("----------");
-					System.out.println("");	
-
-
-
 					break;
 				case "3": // Delete file
+
+					System.out.println("Option 2: Delete file");
+					System.out.println("Choose which file to delete from the server: ");
+
+					File deleteF = new File("D:/Skola/Natverksprogrammeringochsäkerhet(TNM031)/Labs-and-assignments/3/SecureAdditionServer/Server/Files");
+					listFiles(deleteF);
+
+					fileOption = scan.nextLine();
+					socketToServer.println(fileOption);
+				
 					
+					System.out.println("Server response: " + socketFromServer.readLine()); 
+					socketFromServer.close();
+					socketToServer.close();
+
 					break; 
 
 				default: 
@@ -146,14 +154,29 @@ public class SecureAdditionClient {
 
 			}
 
-
-
+			scan.close();
 
 		}
 		catch( Exception x ) {
 			System.out.println( x );
 			x.printStackTrace();
 		}
+	}
+
+
+	private static void listFiles(File files ){
+
+		String fileNames[];
+		fileNames = files.list();
+		System.out.println("----------");
+		System.out.println("");
+				
+		for (String serverFileName : fileNames)
+					System.out.println(serverFileName);
+
+		System.out.println("");	
+		System.out.println("----------");
+		System.out.println("");	
 	}
 	
 	

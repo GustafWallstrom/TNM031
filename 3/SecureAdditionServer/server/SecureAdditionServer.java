@@ -8,7 +8,6 @@ import java.util.StringTokenizer;
 
 
 
-
 public class SecureAdditionServer {
 	private int port;
 	// This is not a reserved port number
@@ -53,40 +52,66 @@ public class SecureAdditionServer {
 
       		BufferedReader socketFromClient = new BufferedReader( new InputStreamReader( incoming.getInputStream() ) );
 			PrintWriter socketToClient = new PrintWriter( incoming.getOutputStream(), true );			
-			
-			// String str;
-			// while ( !(str = socketFromClient.readLine()).equals("") ) {
-			// 	double result = 0;
-			// 	StringTokenizer st = new StringTokenizer( str );
-			// 	try {
-			// 		while( st.hasMoreTokens() ) {
-			// 			Double d = new Double( st.nextToken() );
-			// 			result += d.doubleValue();
-			// 		}
-			// 		socketToClient.println( "The result is " + result );
-			// 	}
-			// 	catch( NumberFormatException nfe ) {
-			// 		socketToClient.println( "Sorry, your list contains an invalid number" );
-			// 	}
-			// }
 		
-
 			String option = socketFromClient.readLine();
-
+			String line;
 
 			switch(option){
 				case "1": // Upload file to server
-				System.out.println("Option 1, uploading file to server...");
+					System.out.println("Option 1, uploading file to server...");
 
+					try{
+						File newFile = new File( "./server/Files/" + socketFromClient.readLine());
+						System.out.println("Filename: " + newFile);
+						newFile.createNewFile(); 
 
-				System.out.println("From the client: " + socketFromClient.readLine());
+						FileWriter writer = new FileWriter(newFile);
+						
+						while ((line = socketFromClient.readLine()) != null) { 
 
+							writer.write(line + "\n");
+						}
+						writer.close();
+		
+					}catch (IOException e) {
+						System.out.println("An error occurred.");
+						e.printStackTrace();
+					}
 		
 					break;
 				case "2": // Download file from server
+					try {
+						String fileOption = socketFromClient.readLine();	
+						BufferedReader reader = new BufferedReader(new FileReader( "./server/Files/" + fileOption)); 
+
+						socketToClient.println(fileOption);
+						
+						while ((line = reader.readLine()) != null) { 
+							System.out.println(line);
+							socketToClient.println(line); // send one line at the time to client
+						}
+						reader.close();
+						socketToClient.close();
+
+					} catch (IOException ioe) {
+						System.out.println("Error is: " + ioe);
+						ioe.printStackTrace();
+					}
 
 					break;
 				case "3": // Delete file from server
+
+					String fileDeleteOption = socketFromClient.readLine();	
+					try{
+						File file = new File( "./server/Files/" + fileDeleteOption);
+
+						if(file.delete()) socketToClient.println("The file: " + fileDeleteOption + " is deleted."); 
+						else socketToClient.println("Deletion failed");
+
+					} catch (Exception ioe) {
+						System.out.println("Error is: " + ioe);
+						ioe.printStackTrace();
+					}
 
 					break;
 				default:
