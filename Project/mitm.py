@@ -8,7 +8,7 @@
 
 # 0.    Run: mitm.py -help for options
 
-# 1.    Execute:  mitm.py -i enp5s0 -t1 IP-target1 -t2 IP-target2 -f --clock
+# 1.    Execute:  mitm.py -i *Network Interface -t1 *IP-target1 -t2 *IP-target2 -f --clock
 
 # 2.    The attack will continue sending poison every 2.5 second.
 #       Interrupt the attack with CTRL+C
